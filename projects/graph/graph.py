@@ -9,7 +9,7 @@ class Graph:
     """Represent a graph as a dictionary of vertices mapping labels to edges."""
 
     def __init__(self):
-        self.vertices = {}
+        self.vertices = {} # This is our adjacency list
 
     def add_vertex(self, vertex_id):
         """
@@ -19,9 +19,11 @@ class Graph:
 
     def add_edge(self, v1, v2):
         """
-        Add a directed edge to the graph.
+        Add a directed edge to the graph from v1 to v2
         """
+        # Check if they exist
         if v1 in self.vertices and v2 in self.vertices:
+            # Add the edge
             self.vertices[v1].add(v2)
         else:
             print("ERROR: vertex does not exist")
@@ -98,14 +100,11 @@ class Graph:
             visisted = set()
         # Check if the node has been visited
         # If not...
-        print(visisted)
-        if starting_vertex not in visisted:
-            # Mark it as visisted
-            visisted.add(starting_vertex)
-            print(starting_vertex)
-            # Call dft_recursive on each neighbor
-            for neighbor in self.get_neighbors(starting_vertex):
-                self.dft_recursive(neighbor, visisted)
+        visisted.add(starting_vertex)
+        print(starting_vertex)
+        for child in self.vertices[starting_vertex]:
+            if child not in visisted:
+                self.dft_recursive(child, visisted)
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -189,15 +188,13 @@ class Graph:
             visisted = set()
         if path is None:
             path = []
-        if starting_vertex not in visisted:
-            visisted.add(starting_vertex)
-            path_copy = path.copy()
-            path_copy.append(starting_vertex)
-            if starting_vertex == destination_vertex:
-                return path_copy
-            for neighbor in self.get_neighbors(starting_vertex):
-                new_path = self.dfs_recursive(
-                    neighbor, destination_vertex, visisted, path_copy)
+        visisted.add(starting_vertex)
+        path = path + [starting_vertex]
+        if starting_vertex == destination_vertex:
+            return path
+        for child in self.vertices[starting_vertex]:
+            if child not in visisted:
+                new_path = self.dfs_recursive(child, destination_vertex, visisted, path)
                 if new_path:
                     return new_path
         return None
